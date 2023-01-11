@@ -19,11 +19,11 @@ var (
 )
 
 type Config struct {
-	SessionToken string `json:"session-token"`
-	CfClearance  string `json:"cf_clearance"`
-	UserAgent    string `json:"user-agent"`
-	Debug        bool   `json:"debug"`
-	LogLevel     string `json:"log-level"`
+	ApiKey    string `json:"api-key"`
+	AppID     string `json:"app-id"`
+	AppSecret string `json:"app-secret"`
+	Debug     bool   `json:"debug"`
+	LogLevel  string `json:"log-level"`
 }
 
 func init() {

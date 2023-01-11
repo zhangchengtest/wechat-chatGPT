@@ -1,19 +1,21 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	"github.com/go-chi/chi/v5"
 	m "github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/render"
+	"github.com/silenceper/wechat/v2"
+	"github.com/silenceper/wechat/v2/cache"
+	offConfig "github.com/silenceper/wechat/v2/officialaccount/config"
 	log "github.com/sirupsen/logrus"
 	"golang.org/x/sync/singleflight"
 	"io"
+	"io/ioutil"
 	"net"
 	"net/http"
 	"os"
 	"runtime"
-	"strconv"
 	"strings"
 	"time"
 	"wxChatGPT/chatGPT"
@@ -24,7 +26,7 @@ import (
 	"wxChatGPT/util/signature"
 )
 
-const wxToken = "" // 这里填微信开发平台里设置的 Token
+const wxToken = "cheng12345678" // 这里填微信开发平台里设置的 Token
 
 var reqGroup singleflight.Group
 
@@ -54,6 +56,8 @@ func main() {
 	// 微信消息处理
 	r.Post("/weChatGPT", wechatMsgReceive)
 
+	r.Get("/createMenu", createMenu)
+
 	l, err := net.Listen("tcp", ":7458")
 	if err != nil {
 		log.Fatalln(err)
@@ -66,16 +70,12 @@ func main() {
 
 // ChatGPT 可用性检查
 func healthCheck(w http.ResponseWriter, r *http.Request) {
-	defer chatGPT.DefaultGPT().DeleteUser("healthCheck")
-	msg, err, _ := reqGroup.Do("healthCheck", func() (interface{}, error) {
-		ctx, cancel := context.WithCancel(context.Background())
-		defer cancel()
-		result := <-chatGPT.DefaultGPT().SendMsgChan("宇宙的终极答案是什么?", "healthCheck", ctx)
-		return result.Val, result.Err
-	})
+	msg, err := gtp.Completions("宇宙的终极答案是什么?")
 	if err != nil {
-		panic(err)
+		log.Printf("gtp request error: %v \n", err)
+		msg = "机器人神了，我一会发现了就去修。"
 	}
+
 	log.Infof("测试返回：%s", msg)
 	render.PlainText(w, r, "ok")
 }
@@ -98,6 +98,35 @@ func wechatCheck(w http.ResponseWriter, r *http.Request) {
 	log.Warnln("微信接入校验失败")
 }
 
+// 微信接入校验
+func createMenu(w http.ResponseWriter, r *http.Request) {
+
+	wc := wechat.NewWechat()
+	//这里本地内存保存access_token，也可选择redis，memcache或者自定cache
+	memory := cache.NewMemory()
+	cfg := &offConfig.Config{
+		AppID:     "wx70711c9b88f9c12f",
+		AppSecret: "20993710aa48342888d3a0b1755af9d6",
+		Token:     wxToken,
+		//EncodingAESKey: "xxxx",
+		Cache: memory,
+	}
+	officialAccount := wc.GetOfficialAccount(cfg)
+	menu := officialAccount.GetMenu()
+	data := readJson("menu.json")
+	menu.SetMenuByJSON(data)
+}
+
+func readJson(name string) string {
+	b, err := ioutil.ReadFile(name) // just pass the file name
+	if err != nil {
+		fmt.Print(err)
+	}
+	str := string(b) // convert content to a 'string'
+	fmt.Println(str) // print the content as a 'string'
+	return str
+}
+
 // 微信消息处理
 func wechatMsgReceive(w http.ResponseWriter, r *http.Request) {
 	// 解析消息
@@ -115,7 +144,7 @@ func wechatMsgReceive(w http.ResponseWriter, r *http.Request) {
 	// 关注公众号事件
 	if xmlMsg.MsgType == "event" {
 		if xmlMsg.Event == "unsubscribe" {
-			chatGPT.DefaultGPT().DeleteUser(xmlMsg.FromUserName)
+			//chatGPT.DefaultGPT().DeleteUser(xmlMsg.FromUserName)
 		}
 		if xmlMsg.Event != "subscribe" {
 			util.TodoEvent(w)
@@ -128,22 +157,15 @@ func wechatMsgReceive(w http.ResponseWriter, r *http.Request) {
 			util.TodoEvent(w)
 			return
 		}
-		// 最多等待 15 s， 超时返回空值
-		msg, err, _ := reqGroup.Do(strconv.FormatInt(xmlMsg.MsgId, 10), func() (interface{}, error) {
-			ctx, cancel := context.WithCancel(context.Background())
-			defer cancel()
-			select {
-			case result := <-chatGPT.DefaultGPT().SendMsgChan(xmlMsg.Content, xmlMsg.FromUserName, ctx):
-				return result.Val, result.Err
-			case <-time.After(14*time.Second + 500*time.Millisecond):
-				// 超时返回错误
-				return "", fmt.Errorf("请求超时, MsgId: %d", xmlMsg.MsgId)
-			}
-		})
+		// 替换掉@文本，然后向GPT发起请求
+		replaceText := "@cheng"
+		requestText := strings.TrimSpace(strings.ReplaceAll(xmlMsg.Content, replaceText, ""))
+		ss, err := gtp.Completions(requestText)
 		if err != nil {
-			panic(err)
+			log.Printf("gtp request error: %v \n", err)
+			ss = "机器人神了，我一会发现了就去修。"
 		}
-		replyMsg = msg.(string)
+		replyMsg = strings.TrimSpace(ss)
 	} else {
 		util.TodoEvent(w)
 		return
