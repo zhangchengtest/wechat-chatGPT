@@ -58,7 +58,7 @@ func main() {
 
 	r.Get("/createMenu", createMenu)
 
-	l, err := net.Listen("tcp", ":7458")
+	l, err := net.Listen("tcp", ":"+config.ReadConfig().Port)
 	if err != nil {
 		log.Fatalln(err)
 	}

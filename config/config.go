@@ -22,6 +22,7 @@ type Config struct {
 	ApiKey    string `json:"api-key"`
 	AppID     string `json:"app-id"`
 	AppSecret string `json:"app-secret"`
+	Port      string `json:"port"`
 	Debug     bool   `json:"debug"`
 	LogLevel  string `json:"log-level"`
 }
