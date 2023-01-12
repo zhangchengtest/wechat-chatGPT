@@ -98,3 +98,6 @@ go build -trimpath -o ./dist/weChatGPT \
 > 但绝大多数情况下通过逆向得到的ChatGPT接口的相应速率都超过了这个时间限制。
 >
 > 故本 Bot 几乎无法正常工作，可能以后等 ChatGPT 的正式接口出来，会重构本项目的代码。
+
+
+nohup ./wxChatGPT daemon > log.out 2>&1 &

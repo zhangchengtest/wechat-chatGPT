@@ -92,3 +92,8 @@ func Completions(msg string) (string, error) {
 	log.Printf("gpt response text: %s \n", reply)
 	return reply, nil
 }
+
+type Result struct {
+	Val string
+	Err error
+}

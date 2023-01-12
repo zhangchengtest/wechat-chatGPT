@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"github.com/go-chi/chi/v5"
 	m "github.com/go-chi/chi/v5/middleware"
@@ -8,6 +9,7 @@ import (
 	"github.com/silenceper/wechat/v2"
 	"github.com/silenceper/wechat/v2/cache"
 	offConfig "github.com/silenceper/wechat/v2/officialaccount/config"
+	"github.com/silenceper/wechat/v2/officialaccount/message"
 	log "github.com/sirupsen/logrus"
 	"golang.org/x/sync/singleflight"
 	"io"
@@ -57,6 +59,8 @@ func main() {
 	r.Post("/weChatGPT", wechatMsgReceive)
 
 	r.Get("/createMenu", createMenu)
+
+	r.Get("/test", test2)
 
 	l, err := net.Listen("tcp", ":"+config.ReadConfig().Port)
 	if err != nil {
@@ -115,6 +119,7 @@ func createMenu(w http.ResponseWriter, r *http.Request) {
 	menu := officialAccount.GetMenu()
 	data := readJson("menu.json")
 	menu.SetMenuByJSON(data)
+
 }
 
 func readJson(name string) string {
@@ -126,6 +131,83 @@ func readJson(name string) string {
 	fmt.Println(str) // print the content as a 'string'
 	return str
 }
+
+func someFunc(ctx context.Context) {
+	for {
+
+		select {
+		case <-ctx.Done():
+			fmt.Println("bbbb")
+			return
+		default:
+			fmt.Println("sss")
+
+		}
+	}
+
+}
+
+func test(w http.ResponseWriter, r *http.Request) {
+	ctx, cancel := context.WithCancel(context.Background())
+	go func(ctx context.Context) {
+		for {
+			select {
+			case <-ctx.Done():
+				fmt.Println("监控退出，停止了...")
+				return
+			default:
+				fmt.Println("goroutine监控中...")
+				time.Sleep(2 * time.Second)
+			}
+		}
+	}(ctx)
+
+	time.Sleep(10 * time.Second)
+	fmt.Println("可以了，通知监控停止")
+	cancel()
+	//为了检测监控过是否停止，如果没有监控输出，就表示停止了
+	time.Sleep(5 * time.Second)
+}
+
+func test2(w http.ResponseWriter, r *http.Request) {
+	ctx, cancel := context.WithCancel(context.Background())
+	num := 1
+	go func(ctx context.Context) {
+		for {
+			select {
+			case <-ctx.Done():
+				fmt.Println("监控退出，停止了...")
+				return
+			case <-time.After(3*time.Second + 500*time.Millisecond):
+				fmt.Println("goroutine监控中...")
+				time.Sleep(2 * time.Second)
+				if num >= 3 {
+					cancel()
+				}
+				num++
+			}
+		}
+	}(ctx)
+	fmt.Println("我来了")
+
+}
+
+//func SendMsgChan(msg string, ctx context.Context) <-chan Result {
+//	ch := make(chan Result, 1)
+//	go func() {
+//		defer func() {
+//			if err := recover(); err != nil {
+//				err = err.(error)
+//				if err != context.Canceled {
+//					ch <- Result{Err: err.(error)}
+//				}
+//			}
+//		}()
+//		a, e := Completions(msg)
+//		ch <- Result{Val: a, Err: e}
+//	}()
+//	return ch
+//}
 
 // 微信消息处理
 func wechatMsgReceive(w http.ResponseWriter, r *http.Request) {
@@ -157,15 +239,95 @@ func wechatMsgReceive(w http.ResponseWriter, r *http.Request) {
 			util.TodoEvent(w)
 			return
 		}
-		// 替换掉@文本，然后向GPT发起请求
+		//// 替换掉@文本，然后向GPT发起请求
 		replaceText := "@cheng"
 		requestText := strings.TrimSpace(strings.ReplaceAll(xmlMsg.Content, replaceText, ""))
-		ss, err := gtp.Completions(requestText)
-		if err != nil {
-			log.Printf("gtp request error: %v \n", err)
-			ss = "机器人神了，我一会发现了就去修。"
+		//ss, err := gtp.Completions(requestText)
+		//if err != nil {
+		//	log.Printf("gtp request error: %v \n", err)
+		//	ss = "机器人神了，我一会发现了就去修。"
+		//}
+		//replyMsg = strings.TrimSpace(ss)
+
+		wc := wechat.NewWechat()
+		//这里本地内存保存access_token，也可选择redis，memcache或者自定cache
+		memory := cache.NewMemory()
+		cfg := &offConfig.Config{
+			AppID:     "wx70711c9b88f9c12f",
+			AppSecret: "20993710aa48342888d3a0b1755af9d6",
+			Token:     wxToken,
+			//EncodingAESKey: "xxxx",
+			Cache: memory,
 		}
-		replyMsg = strings.TrimSpace(ss)
+		officialAccount := wc.GetOfficialAccount(cfg)
+
+		ctx, cancel := context.WithCancel(context.Background())
+		num := 1
+		fmt.Println("我来了")
+		go func(ctx context.Context) {
+			for {
+				select {
+				case <-ctx.Done():
+					fmt.Println("完成...")
+					return
+
+				case <-time.After(4*time.Second + 500*time.Millisecond):
+					if num <= 5 {
+						fmt.Println("稍等")
+						//data := message.MediaText{
+						//	Content: "稍等",
+						//}
+						//customerMessage := message.CustomerMessage{
+						//	Msgtype: message.MsgTypeText,
+						//	Text:    &data,
+						//	ToUser:  xmlMsg.FromUserName,
+						//}
+						//officialAccount.GetCustomerMessageManager().Send(&customerMessage)
+						num++
+					} else {
+						fmt.Println("哦吼重新问吧")
+
+						data := message.MediaText{
+							Content: "哦吼重新问吧",
+						}
+						customerMessage := message.CustomerMessage{
+							Msgtype: message.MsgTypeText,
+							Text:    &data,
+							ToUser:  xmlMsg.FromUserName,
+						}
+						officialAccount.GetCustomerMessageManager().Send(&customerMessage)
+						cancel()
+					}
+
+				}
+			}
+		}(ctx)
+
+		go func() {
+
+			a, err := gtp.Completions(requestText)
+			if err != nil {
+				num = 100
+			}
+			data := message.MediaText{
+				Content: strings.TrimSpace(a),
+			}
+			customerMessage := message.CustomerMessage{
+				Msgtype: message.MsgTypeText,
+				Text:    &data,
+				ToUser:  xmlMsg.FromUserName,
+			}
+			if num <= 5 {
+				error := officialAccount.GetCustomerMessageManager().Send(&customerMessage)
+				if error != nil {
+					fmt.Println(error)
+				}
+			}
+
+			cancel()
+		}()
+
+		replyMsg = strings.TrimSpace("收到，稍等")
 	} else {
 		util.TodoEvent(w)
 		return
