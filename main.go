@@ -270,7 +270,8 @@ func wechatMsgReceive(w http.ResponseWriter, r *http.Request) {
 			util.TodoEvent(w)
 			return
 		}
-		replyMsg = "https://rvjrijs0ha.feishu.cn/docx/JmJYda0KwoHsLGx0oZOctIP6nxc"
+		replyMsg = "简历 " + "https://rvjrijs0ha.feishu.cn/docx/JmJYda0KwoHsLGx0oZOctIP6nxc" + "\n"
+		replyMsg = replyMsg + "招聘要求 " + "https://rvjrijs0ha.feishu.cn/docx/YTMxdDMccoVh6ZxKdf7cQsa2nKf"
 		//// 替换掉@文本，然后向GPT发起请求
 		if xmlMsg.Content == "cheng" {
 
