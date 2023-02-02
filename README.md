@@ -5,6 +5,13 @@ go build .
 pkill -9 wxChatGPT
 nohup ./wxChatGPT daemon > log.out 2>&1 &
 
+
+cd /ROOT/wechat-chatGPT
+git pull
+pkill -9 wxChatGPT
+nohup ./wxChatGPT daemon > log.out 2>&1 &
+
+
 ## WeChat-chatGPT
 
 具有微信公众号被动回复用户消息功能的 ChatGPTBot 实现
