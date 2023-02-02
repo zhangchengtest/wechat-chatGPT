@@ -62,6 +62,8 @@ func main() {
 
 	r.Get("/test", test2)
 
+	r.Get("/sendFood", sendFood)
+
 	l, err := net.Listen("tcp", ":"+config.ReadConfig().Port)
 	if err != nil {
 		log.Fatalln(err)
@@ -118,7 +120,10 @@ func createMenu(w http.ResponseWriter, r *http.Request) {
 	officialAccount := wc.GetOfficialAccount(cfg)
 	menu := officialAccount.GetMenu()
 	data := readJson("menu.json")
-	menu.SetMenuByJSON(data)
+	err := menu.SetMenuByJSON(data)
+	if err != nil {
+		fmt.Println(err)
+	}
 
 }
 
@@ -145,6 +150,32 @@ func someFunc(ctx context.Context) {
 		}
 	}
 
+}
+func sendFood(w http.ResponseWriter, r *http.Request) {
+	wc := wechat.NewWechat()
+	//这里本地内存保存access_token，也可选择redis，memcache或者自定cache
+	memory := cache.NewMemory()
+	cfg := &offConfig.Config{
+		AppID:     "wx70711c9b88f9c12f",
+		AppSecret: "20993710aa48342888d3a0b1755af9d6",
+		Token:     wxToken,
+		//EncodingAESKey: "xxxx",
+		Cache: memory,
+	}
+	officialAccount := wc.GetOfficialAccount(cfg)
+
+	data := message.MediaText{
+		Content: "哦吼重新问吧",
+	}
+	customerMessage := message.CustomerMessage{
+		Msgtype: message.MsgTypeText,
+		Text:    &data,
+		ToUser:  "oKPCA1d6cAjqDDqHkoAO3YHRWVgg",
+	}
+	error := officialAccount.GetCustomerMessageManager().Send(&customerMessage)
+	if error != nil {
+		fmt.Println(error)
+	}
 }
 
 func test(w http.ResponseWriter, r *http.Request) {
@@ -239,9 +270,27 @@ func wechatMsgReceive(w http.ResponseWriter, r *http.Request) {
 			util.TodoEvent(w)
 			return
 		}
+		replyMsg = "https://rvjrijs0ha.feishu.cn/docx/JmJYda0KwoHsLGx0oZOctIP6nxc"
 		//// 替换掉@文本，然后向GPT发起请求
-		replaceText := "@cheng"
-		requestText := strings.TrimSpace(strings.ReplaceAll(xmlMsg.Content, replaceText, ""))
+		if xmlMsg.Content == "cheng" {
+
+			textRes := &convert.TextRes{
+				ToUserName:   xmlMsg.FromUserName,
+				FromUserName: xmlMsg.ToUserName,
+				CreateTime:   time.Now().Unix(),
+				MsgType:      "text",
+				Content:      replyMsg,
+			}
+			_, err := w.Write(textRes.ToXml())
+			if err != nil {
+				log.Errorln(err)
+				if config.GetIsDebug() {
+					m.PrintPrettyStack(err)
+				}
+			}
+			return
+		}
+		requestText := strings.TrimSpace(strings.ReplaceAll(xmlMsg.Content, "@cheng", ""))
 		//ss, err := gtp.Completions(requestText)
 		//if err != nil {
 		//	log.Printf("gtp request error: %v \n", err)
@@ -272,7 +321,7 @@ func wechatMsgReceive(w http.ResponseWriter, r *http.Request) {
 					return
 
 				case <-time.After(4*time.Second + 500*time.Millisecond):
-					if num <= 5 {
+					if num <= 10 {
 						fmt.Println("稍等")
 						//data := message.MediaText{
 						//	Content: "稍等",

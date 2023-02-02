@@ -31,6 +31,11 @@
           "type": "view",
           "name": "学生端下载",
           "url": "https://m-test.cunwedu.com.cn/#/app"
+        },
+        {
+          "type": "view",
+          "name": "拼图",
+          "url": "http://game.punengshuo.com/#/puzzle/index"
         }
       ]
     },{

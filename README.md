@@ -1,3 +1,10 @@
+
+cd /ROOT/wechat-chatGPT
+git pull
+go build .
+pkill -9 wxChatGPT
+nohup ./wxChatGPT daemon > log.out 2>&1 &
+
 ## WeChat-chatGPT
 
 具有微信公众号被动回复用户消息功能的 ChatGPTBot 实现
@@ -99,5 +106,3 @@ go build -trimpath -o ./dist/weChatGPT \
 >
 > 故本 Bot 几乎无法正常工作，可能以后等 ChatGPT 的正式接口出来，会重构本项目的代码。
 
-
-nohup ./wxChatGPT daemon > log.out 2>&1 &
