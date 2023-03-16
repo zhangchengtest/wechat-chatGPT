@@ -6,6 +6,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	m "github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/render"
+	strftime "github.com/itchyny/timefmt-go"
 	"github.com/silenceper/wechat/v2"
 	"github.com/silenceper/wechat/v2/cache"
 	offConfig "github.com/silenceper/wechat/v2/officialaccount/config"
@@ -291,6 +292,37 @@ func wechatMsgReceive(w http.ResponseWriter, r *http.Request) {
 			}
 			return
 		}
+
+		if xmlMsg.Content == "日记" {
+
+			t := time.Now()
+			title := strftime.Format(t, "%Y-%m-%d")
+
+			requestText := strings.TrimSpace(strings.ReplaceAll(xmlMsg.Content, "日记 ", ""))
+
+			posturl := "https://api.punengshuo.com/api/addDinary"
+			jsonStr := []byte(`{ "chapter": 1, "category": 日记, 
+		"title": "` + title + `", "content": "` + requestText + `" }`)
+
+			content := util.Post(posturl, jsonStr, "application/json")
+			fmt.Printf("data: s%", content)
+			textRes := &convert.TextRes{
+				ToUserName:   xmlMsg.FromUserName,
+				FromUserName: xmlMsg.ToUserName,
+				CreateTime:   time.Now().Unix(),
+				MsgType:      "text",
+				Content:      "ok",
+			}
+			_, err := w.Write(textRes.ToXml())
+			if err != nil {
+				log.Errorln(err)
+				if config.GetIsDebug() {
+					m.PrintPrettyStack(err)
+				}
+			}
+			return
+		}
+
 		requestText := strings.TrimSpace(strings.ReplaceAll(xmlMsg.Content, "@cheng", ""))
 		//ss, err := gtp.Completions(requestText)
 		//if err != nil {

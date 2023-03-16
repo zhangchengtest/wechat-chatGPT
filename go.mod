@@ -7,6 +7,7 @@ require (
 	github.com/go-chi/chi/v5 v5.0.7
 	github.com/go-chi/render v1.0.2
 	github.com/google/uuid v1.3.0
+	github.com/itchyny/timefmt-go v0.1.5
 	github.com/silenceper/wechat/v2 v2.1.4
 	github.com/sirupsen/logrus v1.9.0
 	golang.org/x/sync v0.1.0

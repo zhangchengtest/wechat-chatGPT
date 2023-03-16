@@ -7,6 +7,7 @@ nohup ./wxChatGPT daemon > log.out 2>&1 &
 
 
 cd /ROOT/wechat-chatGPT
+git checkout .
 git pull
 pkill -9 wxChatGPT
 chmod 777 wxChatGPT

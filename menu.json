@@ -1,36 +1,37 @@
 {
   "button": [
     {
-      "name": "趣味教学",
+      "type":"click",
+      "name":"教师首页",
+      "key":"V1001_TODAY_MUSIC"
+    },
+    {
+      "type":"click",
+      "name":"家长首页",
+      "key":"V1001_TODAY_MUSIC2"
+    },
+    {
+      "name": "关于平台",
       "sub_button": [
         {
           "type": "view",
           "name": "产品介绍",
-          "url": "https://m-test.cunwedu.com.cn/#/resetPassword"
+          "url": "https://m-dev.cunwedu.com.cn/#/products"
         },
         {
           "type": "view",
-          "name": "教学程序",
-          "url": "https://m-test.cunwedu.com.cn/#/app"
+          "name": "教师指南",
+          "url": "https://m-dev.cunwedu.com.cn/#/teacherGuide"
         },
         {
           "type": "view",
-          "name": "使用指引",
-          "url": "https://m-test.cunwedu.com.cn/#/resetPassword"
-        }
-      ]
-    },{
-      "name": "客户端",
-      "sub_button": [
-        {
-          "type": "view",
-          "name": "教师端下载",
-          "url": "https://m-test.cunwedu.com.cn/#/resetPassword"
+          "name": "家长指南",
+          "url": "https://m-dev.cunwedu.com.cn/#/parentGuide"
         },
         {
           "type": "view",
-          "name": "学生端下载",
-          "url": "https://m-test.cunwedu.com.cn/#/app"
+          "name": "产品下载",
+          "url": "https://m-dev.cunwedu.com.cn/#/studyingDown"
         },
         {
           "type": "view",
@@ -38,30 +39,7 @@
           "url": "http://game.punengshuo.com/#/puzzle/index"
         }
       ]
-    },{
-      "name": "个人中心",
-      "sub_button": [
-        {
-          "type": "view",
-          "name": "申请授权",
-          "url": "https://m-test.cunwedu.com.cn/#/applicationAuth"
-        },
-        {
-          "type": "view",
-          "name": "输入授权码",
-          "url": "https://m-test.cunwedu.com.cn/#/authInput"
-        },
-        {
-          "type": "view",
-          "name": "授权审批",
-          "url": "https://m-test.cunwedu.com.cn/#/examine"
-        },
-        {
-          "type": "view",
-          "name": "重置密码",
-          "url": "https://m-test.cunwedu.com.cn/#/resetPassword"
-        }
-      ]
     }
   ]
+
 }
