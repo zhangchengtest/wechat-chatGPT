@@ -293,7 +293,7 @@ func wechatMsgReceive(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		if xmlMsg.Content == "日记" {
+		if strings.Contains(xmlMsg.Content, "日记") {
 
 			t := time.Now()
 			title := strftime.Format(t, "%Y-%m-%d")
