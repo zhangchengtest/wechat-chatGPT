@@ -349,7 +349,7 @@ func wechatMsgReceive(w http.ResponseWriter, r *http.Request) {
 				FromUserName: xmlMsg.ToUserName,
 				CreateTime:   time.Now().Unix(),
 				MsgType:      "text",
-				Content:      result.Message,
+				Content:      result.Data.Content,
 			}
 			_, err := w.Write(textRes.ToXml())
 			if err != nil {
