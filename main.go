@@ -293,7 +293,7 @@ func wechatMsgReceive(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		if strings.Contains(xmlMsg.Content, "日记") {
+		if strings.Contains(xmlMsg.Content, "写日记") {
 
 			t := time.Now()
 			title := strftime.Format(t, "%Y-%m-%d")
@@ -312,6 +312,34 @@ func wechatMsgReceive(w http.ResponseWriter, r *http.Request) {
 				CreateTime:   time.Now().Unix(),
 				MsgType:      "text",
 				Content:      "ok",
+			}
+			_, err := w.Write(textRes.ToXml())
+			if err != nil {
+				log.Errorln(err)
+				if config.GetIsDebug() {
+					m.PrintPrettyStack(err)
+				}
+			}
+			return
+		}
+
+		if strings.Contains(xmlMsg.Content, "看日记") {
+
+			t := time.Now()
+			title := strftime.Format(t, "%Y-%m-%d")
+
+			geturl := "https://api.punengshuo.com/api/seeDinary?"
+			geturl = geturl + "title=" + title
+			geturl = geturl + "&category=日志"
+
+			content := util.Get(geturl)
+			fmt.Printf("data: s%", content)
+			textRes := &convert.TextRes{
+				ToUserName:   xmlMsg.FromUserName,
+				FromUserName: xmlMsg.ToUserName,
+				CreateTime:   time.Now().Unix(),
+				MsgType:      "text",
+				Content:      content,
 			}
 			_, err := w.Write(textRes.ToXml())
 			if err != nil {
