@@ -301,7 +301,7 @@ func wechatMsgReceive(w http.ResponseWriter, r *http.Request) {
 			requestText := strings.TrimSpace(strings.ReplaceAll(xmlMsg.Content, "日记 ", ""))
 
 			posturl := "https://api.punengshuo.com/api/addDinary"
-			jsonStr := []byte(`{ "chapter": 1, "category": 日记, 
+			jsonStr := []byte(`{ "chapter": 1, "category": "日记", 
 		"title": "` + title + `", "content": "` + requestText + `" }`)
 
 			content := util.Post(posturl, jsonStr, "application/json")
