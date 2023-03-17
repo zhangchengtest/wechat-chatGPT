@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"github.com/go-chi/chi/v5"
 	m "github.com/go-chi/chi/v5/middleware"
@@ -27,6 +28,7 @@ import (
 	"wxChatGPT/util"
 	"wxChatGPT/util/middleware"
 	"wxChatGPT/util/signature"
+	"wxChatGPT/vo"
 )
 
 const wxToken = "cheng12345678" // 这里填微信开发平台里设置的 Token
@@ -330,16 +332,24 @@ func wechatMsgReceive(w http.ResponseWriter, r *http.Request) {
 
 			geturl := "https://api.punengshuo.com/api/seeDinary?"
 			geturl = geturl + "title=" + title
-			geturl = geturl + "&category=日志"
+			geturl = geturl + "&category=日记"
 
 			content := util.Get(geturl)
 			fmt.Printf("data: s%", content)
+
+			var result vo.ResultVO
+
+			err2 := json.Unmarshal([]byte(content), &result)
+			if err2 != nil {
+				fmt.Println("error:", err2)
+			}
+
 			textRes := &convert.TextRes{
 				ToUserName:   xmlMsg.FromUserName,
 				FromUserName: xmlMsg.ToUserName,
 				CreateTime:   time.Now().Unix(),
 				MsgType:      "text",
-				Content:      content,
+				Content:      result.Message,
 			}
 			_, err := w.Write(textRes.ToXml())
 			if err != nil {
