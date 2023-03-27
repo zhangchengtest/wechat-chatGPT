@@ -296,12 +296,17 @@ func wechatMsgReceive(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if strings.Contains(xmlMsg.Content, "写日记") {
-			writeDinary(xmlMsg, w)
+			writeDinary(xmlMsg, w, "写日记", "日记")
 			return
 		}
 
 		if strings.Contains(xmlMsg.Content, "看日记") {
 			seeDinary(xmlMsg, w)
+			return
+		}
+
+		if strings.Contains(xmlMsg.Content, "写行程") {
+			writeDinary(xmlMsg, w, "写行程", "行程")
 			return
 		}
 
@@ -414,16 +419,16 @@ func wechatMsgReceive(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func writeDinary(xmlMsg *convert.TextMsg, w http.ResponseWriter) {
+func writeDinary(xmlMsg *convert.TextMsg, w http.ResponseWriter, action string, category string) {
 
 	t := time.Now()
 	title := strftime.Format(t, "%Y-%m-%d")
 
-	requestText := strings.TrimSpace(strings.ReplaceAll(xmlMsg.Content, "写日记 ", ""))
+	requestText := strings.TrimSpace(strings.ReplaceAll(xmlMsg.Content, action, ""))
 
 	posturl := "https://api.punengshuo.com/api/addDinary"
-	jsonStr := []byte(`{ "chapter": 1, "category": "日记", 
-		"title": "` + title + `", "content": "` + requestText + `" }`)
+	jsonStr := []byte(`{ "chapter": 1,
+		"category": "` + category + `", "title": "` + title + `", "content": "` + requestText + `" }`)
 
 	content := util.Post(posturl, jsonStr, "application/json")
 	fmt.Printf("data: s%", content)
