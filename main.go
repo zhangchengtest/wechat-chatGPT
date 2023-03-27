@@ -296,68 +296,12 @@ func wechatMsgReceive(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if strings.Contains(xmlMsg.Content, "写日记") {
-
-			t := time.Now()
-			title := strftime.Format(t, "%Y-%m-%d")
-
-			requestText := strings.TrimSpace(strings.ReplaceAll(xmlMsg.Content, "写日记 ", ""))
-
-			posturl := "https://api.punengshuo.com/api/addDinary"
-			jsonStr := []byte(`{ "chapter": 1, "category": "日记", 
-		"title": "` + title + `", "content": "` + requestText + `" }`)
-
-			content := util.Post(posturl, jsonStr, "application/json")
-			fmt.Printf("data: s%", content)
-			textRes := &convert.TextRes{
-				ToUserName:   xmlMsg.FromUserName,
-				FromUserName: xmlMsg.ToUserName,
-				CreateTime:   time.Now().Unix(),
-				MsgType:      "text",
-				Content:      "ok",
-			}
-			_, err := w.Write(textRes.ToXml())
-			if err != nil {
-				log.Errorln(err)
-				if config.GetIsDebug() {
-					m.PrintPrettyStack(err)
-				}
-			}
+			writeDinary(xmlMsg, w)
 			return
 		}
 
 		if strings.Contains(xmlMsg.Content, "看日记") {
-
-			t := time.Now()
-			title := strftime.Format(t, "%Y-%m-%d")
-
-			geturl := "https://api.punengshuo.com/api/seeDinary?"
-			geturl = geturl + "title=" + title
-			geturl = geturl + "&category=日记"
-
-			content := util.Get(geturl)
-			fmt.Printf("data: s%", content)
-
-			var result vo.ResultVO
-
-			err2 := json.Unmarshal([]byte(content), &result)
-			if err2 != nil {
-				fmt.Println("error:", err2)
-			}
-
-			textRes := &convert.TextRes{
-				ToUserName:   xmlMsg.FromUserName,
-				FromUserName: xmlMsg.ToUserName,
-				CreateTime:   time.Now().Unix(),
-				MsgType:      "text",
-				Content:      result.Data.Content,
-			}
-			_, err := w.Write(textRes.ToXml())
-			if err != nil {
-				log.Errorln(err)
-				if config.GetIsDebug() {
-					m.PrintPrettyStack(err)
-				}
-			}
+			seeDinary(xmlMsg, w)
 			return
 		}
 
@@ -459,6 +403,71 @@ func wechatMsgReceive(w http.ResponseWriter, r *http.Request) {
 		CreateTime:   time.Now().Unix(),
 		MsgType:      "text",
 		Content:      replyMsg,
+	}
+	_, err := w.Write(textRes.ToXml())
+	if err != nil {
+		log.Errorln(err)
+		if config.GetIsDebug() {
+			m.PrintPrettyStack(err)
+		}
+	}
+
+}
+
+func writeDinary(xmlMsg *convert.TextMsg, w http.ResponseWriter) {
+
+	t := time.Now()
+	title := strftime.Format(t, "%Y-%m-%d")
+
+	requestText := strings.TrimSpace(strings.ReplaceAll(xmlMsg.Content, "写日记 ", ""))
+
+	posturl := "https://api.punengshuo.com/api/addDinary"
+	jsonStr := []byte(`{ "chapter": 1, "category": "日记", 
+		"title": "` + title + `", "content": "` + requestText + `" }`)
+
+	content := util.Post(posturl, jsonStr, "application/json")
+	fmt.Printf("data: s%", content)
+	textRes := &convert.TextRes{
+		ToUserName:   xmlMsg.FromUserName,
+		FromUserName: xmlMsg.ToUserName,
+		CreateTime:   time.Now().Unix(),
+		MsgType:      "text",
+		Content:      "ok",
+	}
+	_, err := w.Write(textRes.ToXml())
+	if err != nil {
+		log.Errorln(err)
+		if config.GetIsDebug() {
+			m.PrintPrettyStack(err)
+		}
+	}
+}
+
+func seeDinary(xmlMsg *convert.TextMsg, w http.ResponseWriter) {
+
+	t := time.Now()
+	title := strftime.Format(t, "%Y-%m-%d")
+
+	geturl := "https://api.punengshuo.com/api/seeDinary?"
+	geturl = geturl + "title=" + title
+	geturl = geturl + "&category=日记"
+
+	content := util.Get(geturl)
+	fmt.Printf("data: s%", content)
+
+	var result vo.ResultVO
+
+	err2 := json.Unmarshal([]byte(content), &result)
+	if err2 != nil {
+		fmt.Println("error:", err2)
+	}
+
+	textRes := &convert.TextRes{
+		ToUserName:   xmlMsg.FromUserName,
+		FromUserName: xmlMsg.ToUserName,
+		CreateTime:   time.Now().Unix(),
+		MsgType:      "text",
+		Content:      result.Data.Content,
 	}
 	_, err := w.Write(textRes.ToXml())
 	if err != nil {
