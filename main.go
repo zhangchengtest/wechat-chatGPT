@@ -301,12 +301,17 @@ func wechatMsgReceive(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if strings.Contains(xmlMsg.Content, "看日记") {
-			seeDinary(xmlMsg, w)
+			seeDinary(xmlMsg, w, "日记")
 			return
 		}
 
 		if strings.Contains(xmlMsg.Content, "写行程") {
 			writeDinary(xmlMsg, w, "写行程", "行程")
+			return
+		}
+
+		if strings.Contains(xmlMsg.Content, "看行程") {
+			seeDinary(xmlMsg, w, "行程")
 			return
 		}
 
@@ -448,14 +453,14 @@ func writeDinary(xmlMsg *convert.TextMsg, w http.ResponseWriter, action string, 
 	}
 }
 
-func seeDinary(xmlMsg *convert.TextMsg, w http.ResponseWriter) {
+func seeDinary(xmlMsg *convert.TextMsg, w http.ResponseWriter, category string) {
 
 	t := time.Now()
 	title := strftime.Format(t, "%Y-%m-%d")
 
 	geturl := "https://api.punengshuo.com/api/seeDinary?"
 	geturl = geturl + "title=" + title
-	geturl = geturl + "&category=日记"
+	geturl = geturl + "&category=" + category
 
 	content := util.Get(geturl)
 	fmt.Printf("data: s%", content)
