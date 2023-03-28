@@ -295,23 +295,40 @@ func wechatMsgReceive(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		t := time.Now()
+		title := strftime.Format(t, "%Y-%m-%d")
+
 		if strings.Contains(xmlMsg.Content, "写日记") {
-			writeDinary(xmlMsg, w, "写日记", "日记")
+			writeDinary(xmlMsg, w, "写日记", "日记", title)
 			return
 		}
 
 		if strings.Contains(xmlMsg.Content, "看日记") {
-			seeDinary(xmlMsg, w, "日记")
+			seeDinary(xmlMsg, w, "日记", title)
 			return
 		}
 
 		if strings.Contains(xmlMsg.Content, "写行程") {
-			writeDinary(xmlMsg, w, "写行程", "行程")
+			writeDinary(xmlMsg, w, "写行程", "行程", title)
 			return
 		}
 
 		if strings.Contains(xmlMsg.Content, "看行程") {
-			seeDinary(xmlMsg, w, "行程")
+			seeDinary(xmlMsg, w, "行程", title)
+			return
+		}
+
+		if strings.HasPrefix(xmlMsg.Content, "写") {
+			action := strings.Split(xmlMsg.Content, " ")[0]
+			category := strings.ReplaceAll(action, "写", "")
+			writeDinary(xmlMsg, w, action, category, category)
+			return
+		}
+
+		if strings.HasPrefix(xmlMsg.Content, "看") {
+			action := strings.Split(xmlMsg.Content, " ")[0]
+			category := strings.ReplaceAll(action, "看", "")
+			seeDinary(xmlMsg, w, category, category)
 			return
 		}
 
@@ -424,10 +441,7 @@ func wechatMsgReceive(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func writeDinary(xmlMsg *convert.TextMsg, w http.ResponseWriter, action string, category string) {
-
-	t := time.Now()
-	title := strftime.Format(t, "%Y-%m-%d")
+func writeDinary(xmlMsg *convert.TextMsg, w http.ResponseWriter, action string, category string, title string) {
 
 	requestText := strings.TrimSpace(strings.ReplaceAll(xmlMsg.Content, action, ""))
 
@@ -453,10 +467,7 @@ func writeDinary(xmlMsg *convert.TextMsg, w http.ResponseWriter, action string, 
 	}
 }
 
-func seeDinary(xmlMsg *convert.TextMsg, w http.ResponseWriter, category string) {
-
-	t := time.Now()
-	title := strftime.Format(t, "%Y-%m-%d")
+func seeDinary(xmlMsg *convert.TextMsg, w http.ResponseWriter, category string, title string) {
 
 	geturl := "https://api.punengshuo.com/api/seeDinary?"
 	geturl = geturl + "title=" + title
