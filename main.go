@@ -298,23 +298,28 @@ func wechatMsgReceive(w http.ResponseWriter, r *http.Request) {
 		t := time.Now()
 		title := strftime.Format(t, "%Y-%m-%d")
 
-		if strings.Contains(xmlMsg.Content, "写日记") {
+		if strings.HasPrefix(xmlMsg.Content, "写日记") {
 			writeDinary(xmlMsg, w, "写日记", "日记", title)
 			return
 		}
 
-		if strings.Contains(xmlMsg.Content, "看日记") {
+		if strings.HasPrefix(xmlMsg.Content, "看日记") {
 			seeDinary(xmlMsg, w, "日记", title)
 			return
 		}
 
-		if strings.Contains(xmlMsg.Content, "写行程") {
+		if strings.HasPrefix(xmlMsg.Content, "写行程") {
 			writeDinary(xmlMsg, w, "写行程", "行程", title)
 			return
 		}
 
-		if strings.Contains(xmlMsg.Content, "看行程") {
+		if strings.HasPrefix(xmlMsg.Content, "看行程") {
 			seeDinary(xmlMsg, w, "行程", title)
+			return
+		}
+
+		if strings.HasPrefix(xmlMsg.Content, "看小说") {
+			seeNovel(xmlMsg, w)
 			return
 		}
 
@@ -476,7 +481,7 @@ func seeDinary(xmlMsg *convert.TextMsg, w http.ResponseWriter, category string, 
 	content := util.Get(geturl)
 	fmt.Printf("data: s%", content)
 
-	var result vo.ResultVO
+	var result vo.ArticleResultVO
 
 	err2 := json.Unmarshal([]byte(content), &result)
 	if err2 != nil {
@@ -489,6 +494,36 @@ func seeDinary(xmlMsg *convert.TextMsg, w http.ResponseWriter, category string, 
 		CreateTime:   time.Now().Unix(),
 		MsgType:      "text",
 		Content:      result.Data.Content,
+	}
+	_, err := w.Write(textRes.ToXml())
+	if err != nil {
+		log.Errorln(err)
+		if config.GetIsDebug() {
+			m.PrintPrettyStack(err)
+		}
+	}
+}
+
+func seeNovel(xmlMsg *convert.TextMsg, w http.ResponseWriter) {
+
+	geturl := "https://api.punengshuo.com/api/randomNovel"
+
+	content := util.Get(geturl)
+	fmt.Printf("data: s%", content)
+
+	var result vo.NovelResultVO
+
+	err2 := json.Unmarshal([]byte(content), &result)
+	if err2 != nil {
+		fmt.Println("error:", err2)
+	}
+
+	textRes := &convert.TextRes{
+		ToUserName:   xmlMsg.FromUserName,
+		FromUserName: xmlMsg.ToUserName,
+		CreateTime:   time.Now().Unix(),
+		MsgType:      "text",
+		Content:      result.Data,
 	}
 	_, err := w.Write(textRes.ToXml())
 	if err != nil {

@@ -2,9 +2,16 @@ package vo
 
 import "time"
 
-type ResultVO struct {
+type ArticleResultVO struct {
 	Code      int32
 	Data      *Article
+	Message   string
+	isSuccess bool
+}
+
+type NovelResultVO struct {
+	Code      int32
+	Data      string
 	Message   string
 	isSuccess bool
 }

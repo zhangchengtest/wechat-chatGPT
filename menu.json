@@ -1,42 +1,42 @@
 {
   "button": [
     {
-      "type":"click",
-      "name":"教师首页",
-      "key":"V1001_TODAY_MUSIC"
-    },
-    {
-      "type":"click",
-      "name":"家长首页",
-      "key":"V1001_TODAY_MUSIC2"
-    },
-    {
       "name": "关于平台",
       "sub_button": [
         {
           "type": "view",
-          "name": "产品介绍",
-          "url": "https://m-dev.cunwedu.com.cn/#/products"
+          "name": "工具",
+          "url": "http://tools.punengshuo.com"
+        }
+        ,
+        {
+          "type": "view",
+          "name": "飞机",
+          "url": "https://plane.punengshuo.com"
         },
         {
           "type": "view",
-          "name": "教师指南",
-          "url": "https://m-dev.cunwedu.com.cn/#/teacherGuide"
-        },
-        {
-          "type": "view",
-          "name": "家长指南",
-          "url": "https://m-dev.cunwedu.com.cn/#/parentGuide"
-        },
-        {
-          "type": "view",
-          "name": "产品下载",
-          "url": "https://m-dev.cunwedu.com.cn/#/studyingDown"
+          "name": "简谱",
+          "url": "http://music.punengshuo.com"
         },
         {
           "type": "view",
           "name": "拼图",
           "url": "http://game.punengshuo.com/#/puzzle/index"
+        }
+      ]
+    },{
+      "name": "个人中心",
+      "sub_button": [
+        {
+          "type": "view",
+          "name": "自建博客",
+          "url": "https://ape.punengshuo.com"
+        },
+        {
+          "type": "view",
+          "name": "hexo博客",
+          "url": "https://blog.punengshuo.com"
         }
       ]
     }
