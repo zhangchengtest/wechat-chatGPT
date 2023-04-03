@@ -523,7 +523,7 @@ func seeNovel(xmlMsg *convert.TextMsg, w http.ResponseWriter) {
 		FromUserName: xmlMsg.ToUserName,
 		CreateTime:   time.Now().Unix(),
 		MsgType:      "text",
-		Content:      result.Data,
+		Content:      result.Data.Url,
 	}
 	_, err := w.Write(textRes.ToXml())
 	if err != nil {

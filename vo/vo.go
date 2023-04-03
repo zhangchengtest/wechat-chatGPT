@@ -11,9 +11,13 @@ type ArticleResultVO struct {
 
 type NovelResultVO struct {
 	Code      int32
-	Data      string
+	Data      *Novel
 	Message   string
 	isSuccess bool
+}
+
+type Novel struct {
+	Url string `json:"url"`
 }
 
 type Article struct {
