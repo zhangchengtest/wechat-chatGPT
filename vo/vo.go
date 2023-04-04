@@ -17,7 +17,8 @@ type NovelResultVO struct {
 }
 
 type Novel struct {
-	Url string `json:"url"`
+	Content string
+	Url     string `json:"url"`
 }
 
 type Article struct {

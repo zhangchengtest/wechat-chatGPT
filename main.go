@@ -323,6 +323,11 @@ func wechatMsgReceive(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		if strings.HasPrefix(xmlMsg.Content, "看现代小说") {
+			seeNovelTxt(xmlMsg, w)
+			return
+		}
+
 		if strings.HasPrefix(xmlMsg.Content, "写") {
 			action := strings.Split(xmlMsg.Content, " ")[0]
 			category := strings.ReplaceAll(action, "写", "")
@@ -524,6 +529,36 @@ func seeNovel(xmlMsg *convert.TextMsg, w http.ResponseWriter) {
 		CreateTime:   time.Now().Unix(),
 		MsgType:      "text",
 		Content:      result.Data.Url,
+	}
+	_, err := w.Write(textRes.ToXml())
+	if err != nil {
+		log.Errorln(err)
+		if config.GetIsDebug() {
+			m.PrintPrettyStack(err)
+		}
+	}
+}
+
+func seeNovelTxt(xmlMsg *convert.TextMsg, w http.ResponseWriter) {
+
+	geturl := "https://api.punengshuo.com/api/randomNovelTxt"
+
+	content := util.Get(geturl)
+	fmt.Printf("data: s%", content)
+
+	var result vo.NovelResultVO
+
+	err2 := json.Unmarshal([]byte(content), &result)
+	if err2 != nil {
+		fmt.Println("error:", err2)
+	}
+
+	textRes := &convert.TextRes{
+		ToUserName:   xmlMsg.FromUserName,
+		FromUserName: xmlMsg.ToUserName,
+		CreateTime:   time.Now().Unix(),
+		MsgType:      "text",
+		Content:      result.Data.Content + "\n" + result.Data.Url,
 	}
 	_, err := w.Write(textRes.ToXml())
 	if err != nil {
