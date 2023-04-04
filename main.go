@@ -528,7 +528,7 @@ func seeNovel(xmlMsg *convert.TextMsg, w http.ResponseWriter) {
 		FromUserName: xmlMsg.ToUserName,
 		CreateTime:   time.Now().Unix(),
 		MsgType:      "text",
-		Content:      result.Data.Url,
+		Content:      result.Data.Content + "\n\n" + result.Data.Url,
 	}
 	_, err := w.Write(textRes.ToXml())
 	if err != nil {
@@ -558,7 +558,7 @@ func seeNovelTxt(xmlMsg *convert.TextMsg, w http.ResponseWriter) {
 		FromUserName: xmlMsg.ToUserName,
 		CreateTime:   time.Now().Unix(),
 		MsgType:      "text",
-		Content:      result.Data.Content + "\n" + result.Data.Url,
+		Content:      result.Data.Content + "\n\n" + result.Data.Url,
 	}
 	_, err := w.Write(textRes.ToXml())
 	if err != nil {
