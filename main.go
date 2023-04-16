@@ -474,7 +474,7 @@ func seeDinary(xmlMsg *convert.TextMsg, w http.ResponseWriter, category string, 
 	geturl := "https://chengapi.yufu.pub/openapi/articles/see?"
 	geturl = geturl + "title=" + title
 	geturl = geturl + "&category=" + category
-
+	fmt.Printf("geturl: s%", geturl)
 	content := util.Get(geturl)
 	fmt.Printf("data: s%", content)
 
