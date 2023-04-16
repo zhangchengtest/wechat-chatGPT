@@ -318,16 +318,6 @@ func wechatMsgReceive(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		if strings.HasPrefix(xmlMsg.Content, "看小说") {
-			seeNovel(xmlMsg, w)
-			return
-		}
-
-		if strings.HasPrefix(xmlMsg.Content, "看现代小说") {
-			seeNovelTxt(xmlMsg, w)
-			return
-		}
-
 		if strings.HasPrefix(xmlMsg.Content, "写") {
 			action := strings.Split(xmlMsg.Content, " ")[0]
 			category := strings.ReplaceAll(action, "写", "")
@@ -455,7 +445,8 @@ func writeDinary(xmlMsg *convert.TextMsg, w http.ResponseWriter, action string, 
 
 	requestText := strings.TrimSpace(strings.ReplaceAll(xmlMsg.Content, action, ""))
 
-	posturl := "https://api.punengshuo.com/api/addDinary"
+	//posturl := "https://api.punengshuo.com/api/addDinary"
+	posturl := "https://chengapi.yufu.pub/openapi/articles/"
 	jsonStr := []byte(`{ "chapter": 1,
 		"category": "` + category + `", "title": "` + title + `", "content": "` + requestText + `" }`)
 
@@ -479,7 +470,8 @@ func writeDinary(xmlMsg *convert.TextMsg, w http.ResponseWriter, action string, 
 
 func seeDinary(xmlMsg *convert.TextMsg, w http.ResponseWriter, category string, title string) {
 
-	geturl := "https://api.punengshuo.com/api/seeDinary?"
+	//geturl := "https://api.punengshuo.com/api/seeDinary?"
+	geturl := "https://chengapi.yufu.pub/openapi/articles/see?"
 	geturl = geturl + "title=" + title
 	geturl = geturl + "&category=" + category
 
@@ -499,66 +491,6 @@ func seeDinary(xmlMsg *convert.TextMsg, w http.ResponseWriter, category string, 
 		CreateTime:   time.Now().Unix(),
 		MsgType:      "text",
 		Content:      result.Data.Content,
-	}
-	_, err := w.Write(textRes.ToXml())
-	if err != nil {
-		log.Errorln(err)
-		if config.GetIsDebug() {
-			m.PrintPrettyStack(err)
-		}
-	}
-}
-
-func seeNovel(xmlMsg *convert.TextMsg, w http.ResponseWriter) {
-
-	geturl := "https://api.punengshuo.com/api/randomNovel"
-
-	content := util.Get(geturl)
-	fmt.Printf("data: s%", content)
-
-	var result vo.NovelResultVO
-
-	err2 := json.Unmarshal([]byte(content), &result)
-	if err2 != nil {
-		fmt.Println("error:", err2)
-	}
-
-	textRes := &convert.TextRes{
-		ToUserName:   xmlMsg.FromUserName,
-		FromUserName: xmlMsg.ToUserName,
-		CreateTime:   time.Now().Unix(),
-		MsgType:      "text",
-		Content:      result.Data.Content + "\n\n" + result.Data.Url,
-	}
-	_, err := w.Write(textRes.ToXml())
-	if err != nil {
-		log.Errorln(err)
-		if config.GetIsDebug() {
-			m.PrintPrettyStack(err)
-		}
-	}
-}
-
-func seeNovelTxt(xmlMsg *convert.TextMsg, w http.ResponseWriter) {
-
-	geturl := "https://api.punengshuo.com/api/randomNovelTxt"
-
-	content := util.Get(geturl)
-	fmt.Printf("data: s%", content)
-
-	var result vo.NovelResultVO
-
-	err2 := json.Unmarshal([]byte(content), &result)
-	if err2 != nil {
-		fmt.Println("error:", err2)
-	}
-
-	textRes := &convert.TextRes{
-		ToUserName:   xmlMsg.FromUserName,
-		FromUserName: xmlMsg.ToUserName,
-		CreateTime:   time.Now().Unix(),
-		MsgType:      "text",
-		Content:      result.Data.Content + "\n\n" + result.Data.Url,
 	}
 	_, err := w.Write(textRes.ToXml())
 	if err != nil {

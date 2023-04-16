@@ -22,7 +22,22 @@
         {
           "type": "view",
           "name": "拼图",
-          "url": "http://game.punengshuo.com/#/puzzle/index"
+          "url": "https://chengapi.yufu.pub"
+        }
+      ]
+    },  {
+      "name": "学习",
+      "sub_button": [
+        {
+          "type": "view",
+          "name": "聊天",
+          "url": "http://chat.punengshuo.com"
+        }
+      ,
+        {
+          "type": "view",
+          "name": "chatgpt",
+          "url": "http://13.228.240.187:3000/"
         }
       ]
     },{
