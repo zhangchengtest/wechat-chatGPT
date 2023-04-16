@@ -304,7 +304,7 @@ func wechatMsgReceive(w http.ResponseWriter, r *http.Request) {
 		if strings.HasPrefix(xmlMsg.Content, "写") {
 			action := strings.Split(xmlMsg.Content, " ")[0]
 			category := strings.ReplaceAll(action, "写", "")
-			if containsString(strArray, action) {
+			if containsString(strArray, category) {
 				writeDinary(xmlMsg, w, action, category, title)
 				return
 			}
@@ -315,10 +315,12 @@ func wechatMsgReceive(w http.ResponseWriter, r *http.Request) {
 		if strings.HasPrefix(xmlMsg.Content, "看") {
 			action := strings.Split(xmlMsg.Content, " ")[0]
 			category := strings.ReplaceAll(action, "看", "")
-			if containsString(strArray, action) {
+			if containsString(strArray, category) {
 				seeDinary(xmlMsg, w, category, title)
+				fmt.Printf("%s is in the string array\n", category)
 				return
 			}
+			fmt.Printf("%s is in the string array\n", category)
 			seeDinary(xmlMsg, w, category, category)
 			return
 		}
