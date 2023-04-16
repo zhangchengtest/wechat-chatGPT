@@ -299,29 +299,15 @@ func wechatMsgReceive(w http.ResponseWriter, r *http.Request) {
 		t := time.Now()
 		title := strftime.Format(t, "%Y-%m-%d")
 
-		if strings.HasPrefix(xmlMsg.Content, "写日记") {
-			writeDinary(xmlMsg, w, "写日记", "日记", title)
-			return
-		}
-
-		if strings.HasPrefix(xmlMsg.Content, "看日记") {
-			seeDinary(xmlMsg, w, "日记", title)
-			return
-		}
-
-		if strings.HasPrefix(xmlMsg.Content, "写行程") {
-			writeDinary(xmlMsg, w, "写行程", "行程", title)
-			return
-		}
-
-		if strings.HasPrefix(xmlMsg.Content, "看行程") {
-			seeDinary(xmlMsg, w, "行程", title)
-			return
-		}
+		strArray := []string{"日记", "行程", "白马山庄"}
 
 		if strings.HasPrefix(xmlMsg.Content, "写") {
 			action := strings.Split(xmlMsg.Content, " ")[0]
 			category := strings.ReplaceAll(action, "写", "")
+			if containsString(strArray, action) {
+				writeDinary(xmlMsg, w, action, category, title)
+				return
+			}
 			writeDinary(xmlMsg, w, action, category, category)
 			return
 		}
@@ -329,6 +315,10 @@ func wechatMsgReceive(w http.ResponseWriter, r *http.Request) {
 		if strings.HasPrefix(xmlMsg.Content, "看") {
 			action := strings.Split(xmlMsg.Content, " ")[0]
 			category := strings.ReplaceAll(action, "看", "")
+			if containsString(strArray, action) {
+				seeDinary(xmlMsg, w, category, title)
+				return
+			}
 			seeDinary(xmlMsg, w, category, category)
 			return
 		}
@@ -467,6 +457,15 @@ func writeDinary(xmlMsg *convert.TextMsg, w http.ResponseWriter, action string, 
 			m.PrintPrettyStack(err)
 		}
 	}
+}
+
+func containsString(array []string, target string) bool {
+	for _, str := range array {
+		if str == target {
+			return true
+		}
+	}
+	return false
 }
 
 func encodePath(path string) string {
