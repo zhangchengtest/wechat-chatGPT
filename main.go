@@ -18,6 +18,7 @@ import (
 	"io/ioutil"
 	"net"
 	"net/http"
+	"net/url"
 	"os"
 	"runtime"
 	"strings"
@@ -468,6 +469,29 @@ func writeDinary(xmlMsg *convert.TextMsg, w http.ResponseWriter, action string, 
 	}
 }
 
+func encodePath(path string) string {
+	// 将路径按斜杠拆分
+	splits := strings.Split(path, "/")
+	// 对每个部分进行编码
+	for i, s := range splits {
+		if s != "" {
+			splits[i] = url.PathEscape(s)
+		}
+
+	}
+	// 拼接并返回编码后的路径
+	return strings.Join(splits, "/")
+}
+
+func EncodeURL(urlStr string) (string, error) {
+	u, err := url.Parse(urlStr)
+	if err != nil {
+		return "", err
+	}
+	u.Path = encodePath(u.Path)
+	return u.Scheme + "://" + u.Host + u.Path, nil
+}
+
 func seeDinary(xmlMsg *convert.TextMsg, w http.ResponseWriter, category string, title string) {
 
 	//geturl := "https://api.punengshuo.com/api/seeDinary?"
@@ -475,7 +499,10 @@ func seeDinary(xmlMsg *convert.TextMsg, w http.ResponseWriter, category string, 
 	geturl = geturl + "title=" + title
 	geturl = geturl + "&category=" + category
 	fmt.Printf("geturl: s%", geturl)
-	content := util.Get(geturl)
+	encodedPath, _ := EncodeURL(geturl)
+	fmt.Printf("geturl: s%", encodedPath)
+	content := util.Get(encodedPath)
+
 	fmt.Printf("data: s%", content)
 
 	var result vo.ArticleResultVO
