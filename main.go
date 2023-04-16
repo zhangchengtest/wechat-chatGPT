@@ -496,7 +496,7 @@ func seeDinary(xmlMsg *convert.TextMsg, w http.ResponseWriter, category string, 
 
 	//geturl := "https://api.punengshuo.com/api/seeDinary?"
 	geturl := "https://chengapi.yufu.pub/openapi/articles/see?"
-	geturl = geturl + "title=" + title
+	geturl = geturl + "title=" + url.PathEscape(title)
 	geturl = geturl + "&category=" + url.PathEscape(category)
 
 	content := util.Get(geturl)
