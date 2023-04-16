@@ -446,7 +446,7 @@ func writeDinary(xmlMsg *convert.TextMsg, w http.ResponseWriter, action string, 
 	requestText := strings.TrimSpace(strings.ReplaceAll(xmlMsg.Content, action, ""))
 
 	//posturl := "https://api.punengshuo.com/api/addDinary"
-	posturl := "https://chengapi.yufu.pub/openapi/articles/"
+	posturl := "https://chengapi.yufu.pub/openapi/articles/add"
 	jsonStr := []byte(`{ "chapter": 1,
 		"category": "` + category + `", "title": "` + title + `", "content": "` + requestText + `" }`)
 
