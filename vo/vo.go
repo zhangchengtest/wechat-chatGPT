@@ -9,6 +9,17 @@ type ArticleResultVO struct {
 	isSuccess bool
 }
 
+type UserResultVO struct {
+	Code      int32
+	Data      *User
+	Message   string
+	isSuccess bool
+}
+
+type User struct {
+	UserId string
+}
+
 type NovelResultVO struct {
 	Code      int32
 	Data      *Novel

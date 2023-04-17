@@ -258,6 +258,7 @@ func wechatMsgReceive(w http.ResponseWriter, r *http.Request) {
 	// 回复消息
 	replyMsg := ""
 
+	userId := getUser(xmlMsg.FromUserName)
 	// 关注公众号事件
 	if xmlMsg.MsgType == "event" {
 		if xmlMsg.Event == "unsubscribe" {
@@ -305,10 +306,10 @@ func wechatMsgReceive(w http.ResponseWriter, r *http.Request) {
 			action := strings.Split(xmlMsg.Content, " ")[0]
 			category := strings.ReplaceAll(action, "写", "")
 			if containsString(strArray, category) {
-				writeDinary(xmlMsg, w, action, category, title)
+				writeDinary(xmlMsg, w, action, category, title, userId)
 				return
 			}
-			writeDinary(xmlMsg, w, action, category, category)
+			writeDinary(xmlMsg, w, action, category, category, userId)
 			return
 		}
 
@@ -316,12 +317,12 @@ func wechatMsgReceive(w http.ResponseWriter, r *http.Request) {
 			action := strings.Split(xmlMsg.Content, " ")[0]
 			category := strings.ReplaceAll(action, "看", "")
 			if containsString(strArray, category) {
-				seeDinary(xmlMsg, w, category, title)
+				seeDinary(xmlMsg, w, category, title, userId)
 				fmt.Printf("%s is in the string array\n", category)
 				return
 			}
 			fmt.Printf("%s is in the string array\n", category)
-			seeDinary(xmlMsg, w, category, category)
+			seeDinary(xmlMsg, w, category, category, userId)
 			return
 		}
 
@@ -434,14 +435,14 @@ func wechatMsgReceive(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func writeDinary(xmlMsg *convert.TextMsg, w http.ResponseWriter, action string, category string, title string) {
+func writeDinary(xmlMsg *convert.TextMsg, w http.ResponseWriter, action string, category string, title string, userId string) {
 
 	requestText := strings.TrimSpace(strings.ReplaceAll(xmlMsg.Content, action, ""))
 
 	//posturl := "https://api.punengshuo.com/api/addDinary"
 	posturl := "https://chengapi.yufu.pub/openapi/articles/add"
 	jsonStr := []byte(`{ "chapter": 1,
-		"category": "` + category + `", "title": "` + title + `", "content": "` + requestText + `" }`)
+		"category": "` + category + `", "userId": "` + userId + `", "title": "` + title + `", "content": "` + requestText + `" }`)
 
 	content := util.Post(posturl, jsonStr, "application/json")
 	fmt.Printf("data: s%", content)
@@ -493,12 +494,13 @@ func EncodeURL(urlStr string) (string, error) {
 	return u.Scheme + "://" + u.Host + u.Path, nil
 }
 
-func seeDinary(xmlMsg *convert.TextMsg, w http.ResponseWriter, category string, title string) {
+func seeDinary(xmlMsg *convert.TextMsg, w http.ResponseWriter, category string, title string, userId string) {
 
 	//geturl := "https://api.punengshuo.com/api/seeDinary?"
 	geturl := "https://chengapi.yufu.pub/openapi/articles/see?"
 	geturl = geturl + "title=" + url.PathEscape(title)
 	geturl = geturl + "&category=" + url.PathEscape(category)
+	geturl = geturl + "&userId=" + userId
 
 	content := util.Get(geturl)
 
@@ -525,4 +527,23 @@ func seeDinary(xmlMsg *convert.TextMsg, w http.ResponseWriter, category string, 
 			m.PrintPrettyStack(err)
 		}
 	}
+}
+
+func getUser(openid string) string {
+
+	geturl := "https://api.punengshuo.com/api/auth/loadUserByOpenId?"
+	geturl = geturl + "openId=" + openid
+
+	content := util.Get(geturl)
+
+	fmt.Printf("data: s%", content)
+
+	var result vo.UserResultVO
+
+	err2 := json.Unmarshal([]byte(content), &result)
+	if err2 != nil {
+		fmt.Println("error:", err2)
+	}
+
+	return result.Data.UserId
 }

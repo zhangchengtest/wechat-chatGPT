@@ -1,24 +1,14 @@
 {
   "button": [
     {
-      "name": "关于平台",
+      "name": "打卡",
       "sub_button": [
         {
           "type": "view",
-          "name": "工具",
-          "url": "http://tools.punengshuo.com"
+          "name": "白马山庄",
+          "url": "https://chengapi.yufu.pub/timeline?eventName=%E7%99%BD%E9%A9%AC%E5%B1%B1%E5%BA%84"
         }
         ,
-        {
-          "type": "view",
-          "name": "飞机",
-          "url": "https://plane.punengshuo.com"
-        },
-        {
-          "type": "view",
-          "name": "简谱",
-          "url": "http://music.punengshuo.com"
-        },
         {
           "type": "view",
           "name": "拼图",
@@ -26,7 +16,7 @@
         }
       ]
     },  {
-      "name": "学习",
+      "name": "公开",
       "sub_button": [
         {
           "type": "view",
@@ -37,7 +27,7 @@
         {
           "type": "view",
           "name": "chatgpt",
-          "url": "http://13.228.240.187:3000/"
+          "url": "https://gpt.yufu.pub/"
         }
       ]
     },{
@@ -52,6 +42,22 @@
           "type": "view",
           "name": "hexo博客",
           "url": "https://blog.punengshuo.com"
+        },
+        {
+          "type": "view",
+          "name": "工具",
+          "url": "http://tools.punengshuo.com"
+        }
+      ,
+        {
+          "type": "view",
+          "name": "飞机",
+          "url": "https://plane.punengshuo.com"
+        },
+        {
+          "type": "view",
+          "name": "简谱",
+          "url": "http://music.punengshuo.com"
         }
       ]
     }
