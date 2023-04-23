@@ -301,8 +301,8 @@ func wechatMsgReceive(w http.ResponseWriter, r *http.Request) {
 		t := time.Now()
 		title := strftime.Format(t, "%Y-%m-%d")
 
-		strArray := user.Punches
-
+		strArray := getPunches(xmlMsg, "打卡分类", "打卡分类", userId)
+		log.Println(strArray)
 		if strings.HasPrefix(xmlMsg.Content, "写") {
 			action := strings.Split(xmlMsg.Content, " ")[0]
 			category := strings.ReplaceAll(action, "写", "")
@@ -486,15 +486,6 @@ func encodePath(path string) string {
 	return strings.Join(splits, "/")
 }
 
-func EncodeURL(urlStr string) (string, error) {
-	u, err := url.Parse(urlStr)
-	if err != nil {
-		return "", err
-	}
-	u.Path = encodePath(u.Path)
-	return u.Scheme + "://" + u.Host + u.Path, nil
-}
-
 func seeDinary(xmlMsg *convert.TextMsg, w http.ResponseWriter, category string, title string, userId string) {
 
 	//geturl := "https://api.punengshuo.com/api/seeDinary?"
@@ -528,6 +519,29 @@ func seeDinary(xmlMsg *convert.TextMsg, w http.ResponseWriter, category string, 
 			m.PrintPrettyStack(err)
 		}
 	}
+}
+
+func getPunches(xmlMsg *convert.TextMsg, category string, title string, userId string) []string {
+
+	//geturl := "https://api.punengshuo.com/api/seeDinary?"
+	geturl := "https://chengapi.yufu.pub/openapi/articles/see?"
+	geturl = geturl + "title=" + url.PathEscape(title)
+	geturl = geturl + "&category=" + url.PathEscape(category)
+	geturl = geturl + "&userId=" + userId
+
+	content := util.Get(geturl)
+
+	fmt.Printf("data: s%", content)
+
+	var result vo.ArticleResultVO
+
+	err2 := json.Unmarshal([]byte(content), &result)
+	if err2 != nil {
+		fmt.Println("error:", err2)
+	}
+
+	arr := strings.Split(result.Data.Content, "\n")
+	return arr
 }
 
 func getUser(openid string) *vo.User {
