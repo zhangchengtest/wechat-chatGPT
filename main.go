@@ -258,7 +258,8 @@ func wechatMsgReceive(w http.ResponseWriter, r *http.Request) {
 	// 回复消息
 	replyMsg := ""
 
-	userId := getUser(xmlMsg.FromUserName)
+	user := getUser(xmlMsg.FromUserName)
+	userId := user.UserId
 	// 关注公众号事件
 	if xmlMsg.MsgType == "event" {
 		if xmlMsg.Event == "unsubscribe" {
@@ -300,7 +301,7 @@ func wechatMsgReceive(w http.ResponseWriter, r *http.Request) {
 		t := time.Now()
 		title := strftime.Format(t, "%Y-%m-%d")
 
-		strArray := []string{"日记", "行程", "白马山庄"}
+		strArray := user.Punches
 
 		if strings.HasPrefix(xmlMsg.Content, "写") {
 			action := strings.Split(xmlMsg.Content, " ")[0]
@@ -529,7 +530,7 @@ func seeDinary(xmlMsg *convert.TextMsg, w http.ResponseWriter, category string, 
 	}
 }
 
-func getUser(openid string) string {
+func getUser(openid string) *vo.User {
 
 	geturl := "https://api.punengshuo.com/api/auth/loadUserByOpenId?"
 	geturl = geturl + "openId=" + openid
@@ -545,5 +546,5 @@ func getUser(openid string) string {
 		fmt.Println("error:", err2)
 	}
 
-	return result.Data.UserId
+	return result.Data
 }

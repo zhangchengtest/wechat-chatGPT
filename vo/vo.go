@@ -17,7 +17,8 @@ type UserResultVO struct {
 }
 
 type User struct {
-	UserId string
+	UserId  string
+	Punches []string
 }
 
 type NovelResultVO struct {

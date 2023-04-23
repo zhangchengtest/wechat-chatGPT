@@ -7,31 +7,25 @@
           "type": "view",
           "name": "白马山庄",
           "url": "https://chengapi.yufu.pub/timeline?eventName=%E7%99%BD%E9%A9%AC%E5%B1%B1%E5%BA%84"
-        }
-        ,
+        },
         {
           "type": "view",
           "name": "拼图",
           "url": "https://chengapi.yufu.pub"
+        } ,
+        {
+          "type": "view",
+          "name": "上传图片",
+          "url": "https://chengapi.yufu.pub/upload"
+        },
+        {
+          "type": "view",
+          "name": "看小说",
+          "url": "https://chengapi.yufu.pub/novel"
         }
       ]
     },  {
       "name": "公开",
-      "sub_button": [
-        {
-          "type": "view",
-          "name": "聊天",
-          "url": "http://chat.punengshuo.com"
-        }
-      ,
-        {
-          "type": "view",
-          "name": "chatgpt",
-          "url": "https://gpt.yufu.pub/"
-        }
-      ]
-    },{
-      "name": "个人中心",
       "sub_button": [
         {
           "type": "view",
@@ -42,6 +36,20 @@
           "type": "view",
           "name": "hexo博客",
           "url": "https://blog.punengshuo.com"
+        },
+        {
+          "type": "view",
+          "name": "chatgpt",
+          "url": "https://gpt.yufu.pub/"
+        }
+      ]
+    },{
+      "name": "草稿",
+      "sub_button": [
+        {
+          "type": "view",
+          "name": "聊天",
+          "url": "http://chat.punengshuo.com"
         },
         {
           "type": "view",
