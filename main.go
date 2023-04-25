@@ -276,27 +276,6 @@ func wechatMsgReceive(w http.ResponseWriter, r *http.Request) {
 			util.TodoEvent(w)
 			return
 		}
-		replyMsg = "简历 " + "https://rvjrijs0ha.feishu.cn/docx/JmJYda0KwoHsLGx0oZOctIP6nxc" + "\n"
-		replyMsg = replyMsg + "招聘要求 " + "https://rvjrijs0ha.feishu.cn/docx/YTMxdDMccoVh6ZxKdf7cQsa2nKf"
-		//// 替换掉@文本，然后向GPT发起请求
-		if xmlMsg.Content == "cheng" {
-
-			textRes := &convert.TextRes{
-				ToUserName:   xmlMsg.FromUserName,
-				FromUserName: xmlMsg.ToUserName,
-				CreateTime:   time.Now().Unix(),
-				MsgType:      "text",
-				Content:      replyMsg,
-			}
-			_, err := w.Write(textRes.ToXml())
-			if err != nil {
-				log.Errorln(err)
-				if config.GetIsDebug() {
-					m.PrintPrettyStack(err)
-				}
-			}
-			return
-		}
 
 		t := time.Now()
 		title := strftime.Format(t, "%Y-%m-%d")
