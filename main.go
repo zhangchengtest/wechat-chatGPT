@@ -121,6 +121,13 @@ func createMenu(w http.ResponseWriter, r *http.Request) {
 		//EncodingAESKey: "xxxx",
 		Cache: memory,
 	}
+	//cfg := &offConfig.Config{
+	//	AppID:     "wx1408565db8596b16",
+	//	AppSecret: "20993710aa48342888d3a0b1755af9d6",
+	//	Token:     wxToken,
+	//	//EncodingAESKey: "xxxx",
+	//	Cache: memory,
+	//}
 	officialAccount := wc.GetOfficialAccount(cfg)
 	menu := officialAccount.GetMenu()
 	data := readJson("menu.json")

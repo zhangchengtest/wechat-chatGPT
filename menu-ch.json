@@ -1,0 +1,74 @@
+{
+  "button": [
+    {
+      "name": "打卡",
+      "sub_button": [
+        {
+          "type": "view",
+          "name": "白马山庄",
+          "url": "https://chengapi.yufu.pub/timeline?eventName=%E7%99%BD%E9%A9%AC%E5%B1%B1%E5%BA%84"
+        },
+        {
+          "type": "view",
+          "name": "三口棺材",
+          "url": "https://chengapi.yufu.pub/timeline?eventName=%E4%B8%89%E5%8F%A3%E6%A3%BA%E6%9D%90"
+        } ,
+        {
+          "type": "view",
+          "name": "gpt",
+          "url": "https://chengapi.yufu.pub/timeline?eventName=gpt"
+        },
+        {
+          "type": "view",
+          "name": "上传图片",
+          "url": "https://chengapi.yufu.pub/upload"
+        },
+        {
+          "type": "view",
+          "name": "看小说",
+          "url": "https://chengapi.yufu.pub/novel"
+        }
+      ]
+    },  {
+      "name": "公开",
+      "sub_button": [
+        {
+          "type": "view",
+          "name": "自建博客",
+          "url": "https://ape.punengshuo.com"
+        },
+        {
+          "type": "view",
+          "name": "hexo博客",
+          "url": "https://blog.punengshuo.com"
+        }
+      ]
+    },{
+      "name": "草稿",
+      "sub_button": [
+        {
+          "type": "view",
+          "name": "聊天",
+          "url": "http://chat.punengshuo.com"
+        },
+        {
+          "type": "view",
+          "name": "工具",
+          "url": "http://tools.punengshuo.com"
+        }
+      ,
+        {
+          "type": "view",
+          "name": "飞机",
+          "url": "https://plane.punengshuo.com"
+        },
+        {
+          "type": "view",
+          "name": "简谱",
+          "url": "http://music.punengshuo.com"
+        }
+      ]
+    }
+  ]
+
+}

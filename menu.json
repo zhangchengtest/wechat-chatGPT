@@ -1,71 +1,47 @@
 {
   "button": [
     {
+      "name": "点我聊天",
+      "sub_button": [
+        {
+          "type": "view",
+          "name": "chatgpt",
+          "url": "https://gpt.yufu.pub/"
+        },
+        {
+          "type": "view",
+          "name": "my chatgpt",
+          "url": "http://gpt.punengshuo.com/"
+        }
+      ]
+    },
+    {
       "name": "打卡",
       "sub_button": [
         {
           "type": "view",
-          "name": "白马山庄",
-          "url": "https://chengapi.yufu.pub/timeline?eventName=%E7%99%BD%E9%A9%AC%E5%B1%B1%E5%BA%84"
+          "name": "平凡的世界",
+          "url": "https://chengapi.yufu.pub/timeline?eventName=%E5%B9%B3%E5%87%A1%E7%9A%84%E4%B8%96%E7%95%8C"
+        }
+      ]
+    },
+    {
+      "name": "游戏",
+      "sub_button": [
+        {
+          "type": "view",
+          "name": "其它",
+          "url": "https://sso.punengshuo.com/hello"
+        },
+        {
+          "type": "view",
+          "name": "象棋",
+          "url": "https://chengapi.yufu.pub/xiangqi?roomId=1001"
         },
         {
           "type": "view",
           "name": "拼图",
           "url": "https://chengapi.yufu.pub"
-        } ,
-        {
-          "type": "view",
-          "name": "上传图片",
-          "url": "https://chengapi.yufu.pub/upload"
-        },
-        {
-          "type": "view",
-          "name": "看小说",
-          "url": "https://chengapi.yufu.pub/novel"
-        }
-      ]
-    },  {
-      "name": "公开",
-      "sub_button": [
-        {
-          "type": "view",
-          "name": "自建博客",
-          "url": "https://ape.punengshuo.com"
-        },
-        {
-          "type": "view",
-          "name": "hexo博客",
-          "url": "https://blog.punengshuo.com"
-        },
-        {
-          "type": "view",
-          "name": "chatgpt",
-          "url": "https://gpt.yufu.pub/"
-        }
-      ]
-    },{
-      "name": "草稿",
-      "sub_button": [
-        {
-          "type": "view",
-          "name": "聊天",
-          "url": "http://chat.punengshuo.com"
-        },
-        {
-          "type": "view",
-          "name": "工具",
-          "url": "http://tools.punengshuo.com"
-        }
-      ,
-        {
-          "type": "view",
-          "name": "飞机",
-          "url": "https://plane.punengshuo.com"
-        },
-        {
-          "type": "view",
-          "name": "简谱",
-          "url": "http://music.punengshuo.com"
         }
       ]
     }
